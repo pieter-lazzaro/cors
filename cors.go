@@ -23,14 +23,15 @@ package cors
 import (
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/rs/xhandler"
 	"golang.org/x/net/context"
 )
+
+// Log is a simple interface to print debug messages if Debug is set to true
+type Log func(format string, args ...interface{})
 
 // Options is a configuration container to setup the CORS middleware.
 type Options struct {
@@ -72,7 +73,7 @@ type Options struct {
 // Cors http handler
 type Cors struct {
 	// Debug logger
-	Log logrus.StdLogger
+	Log Log
 	// Set to true when allowed origins contains a "*"
 	allowedOriginsAll bool
 	// Normalized list of plain allowed origins
@@ -103,8 +104,9 @@ func New(options Options) *Cors {
 		maxAge:            options.MaxAge,
 		optionPassthrough: options.OptionsPassthrough,
 	}
+
 	if options.Debug {
-		c.Log = log.New(os.Stdout, "[cors] ", log.LstdFlags)
+		c.Log = log.Printf
 	}
 
 	// Normalize options
@@ -338,7 +340,7 @@ func (c *Cors) handleActualRequest(w http.ResponseWriter, r *http.Request) {
 // convenience method. checks if debugging is turned on before printing
 func (c *Cors) logf(format string, a ...interface{}) {
 	if c.Log != nil {
-		c.Log.Printf(format, a...)
+		c.Log(format, a...)
 	}
 }
 
