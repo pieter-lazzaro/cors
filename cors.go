@@ -27,6 +27,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/rs/xhandler"
 	"golang.org/x/net/context"
 )
@@ -71,7 +72,7 @@ type Options struct {
 // Cors http handler
 type Cors struct {
 	// Debug logger
-	Log *log.Logger
+	Log logrus.StdLogger
 	// Set to true when allowed origins contains a "*"
 	allowedOriginsAll bool
 	// Normalized list of plain allowed origins
